@@ -293,7 +293,9 @@ export class TilesRendererBase {
 	// Private Functions
 	fetchTileSet( url, fetchOptions, parent = null ) {
 
-		return fetch( url, fetchOptions )
+		const preprocessedUrl = this.preprocessURL ? this.preprocessURL( tileCb.content.uri ) : tileCb.content.uri;
+
+		return fetch( preprocessedUrl, fetchOptions )
 			.then( res => {
 
 				if ( res.ok ) {
@@ -315,7 +317,7 @@ export class TilesRendererBase {
 					'asset.version is expected to be a string of "1.0" or "0.0"'
 				);
 
-				const basePath = path.dirname( url );
+				const basePath = path.dirname( preprocessedUrl );
 
 				traverseSet(
 					json.root,
@@ -479,7 +481,6 @@ export class TilesRendererBase {
 
 				}
 
-				const uri = this.preprocessURL ? this.preprocessURL( tileCb.content.uri ) : tileCb.content.uri;
 				return this.fetchTileSet( uri, Object.assign( { signal }, this.fetchOptions ), tileCb );
 
 			} )
